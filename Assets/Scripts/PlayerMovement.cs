@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody rb;
     Quaternion rotation;
     Vector3 movement;
+    AudioSource audioSource;
 
 
     // Start is called before the first frame update
@@ -35,6 +36,8 @@ public class PlayerMovement : MonoBehaviour
 
         movement = Vector3.zero;
         rotation = Quaternion.identity;
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -61,10 +64,15 @@ public class PlayerMovement : MonoBehaviour
         if (Mathf.Approximately(movement.magnitude, 0f))
         {
             animator.SetBool("IsWalking", false);
+            audioSource.Stop();
         }
         else
         {
             animator.SetBool("IsWalking", true);
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
         }
     }
 

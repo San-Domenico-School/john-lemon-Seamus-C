@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 
 /**
-* This scripted ends the game when he reaches the level exit
+* This scripted ends the game when he reaches the level exit and plays audio when loose
 *
 * component of GameEndingTrigger
 *
@@ -20,24 +20,27 @@ public class GameEnding : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private CanvasGroup exitBackgroundImageCanvasGroup;
     [SerializeField] private CanvasGroup caughtBackgroundImageCanvasGroup;
+    [SerializeField] private AudioSource exitAudio;
+    [SerializeField] private AudioSource caughtAudio;
+
 
     private float fadeDuration = 1f;
     private float displayImageDuration = 1f;
     private float timer;
     private bool isPlayerAtExit;
     private bool isPlayerCaught;
-
+    private bool hasAudioPlayed;
 
     // Update is called once per frame
     void Update()
     {
         if (isPlayerAtExit)
         {
-            EndLevel(exitBackgroundImageCanvasGroup, false);
+            EndLevel(exitBackgroundImageCanvasGroup, false, exitAudio);
         }
         else if(isPlayerCaught)
         {
-            EndLevel(caughtBackgroundImageCanvasGroup, true);
+            EndLevel(caughtBackgroundImageCanvasGroup, true, caughtAudio);
         }
 
     }
@@ -47,7 +50,7 @@ public class GameEnding : MonoBehaviour
         isPlayerCaught = true;
     }
 
-    private void EndLevel(CanvasGroup image, bool restartGame)
+    private void EndLevel(CanvasGroup image, bool restartGame, AudioSource audioSource)
     {
        timer += Time.deltaTime;
 
@@ -64,6 +67,13 @@ public class GameEnding : MonoBehaviour
                 Application.Quit();
             }
         }
+        
+        if (!hasAudioPlayed)
+        {
+            audioSource.Play();
+            hasAudioPlayed = true;
+        }
+
     }   
 
     private void OnTriggerEnter(Collider other) {
